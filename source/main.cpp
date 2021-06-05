@@ -31,6 +31,8 @@ int width = 1280, height = 720;
 void processInput(GLFWwindow* window);
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
+// imgui
+void Style();
 
 Camera camera(glm::vec3(0.0f, 0.0f, 3.0f));
 glm::vec2 lastMouse(width / 2.0f, height / 2.0f);
@@ -74,59 +76,60 @@ int main()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO();
+	io.ConfigFlags |= ImGuiConfigFlags_NoMouse;
 	// Setup Platform/Renderer bindings
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 330");
 	// Setup Dear ImGui style
 	ImGui::StyleColorsDark();
+	// Style();
 
 	VertexArray vao;
 	vao.Bind();
 
 	float vertices[] = {
-		// position           texture coords
-		// back face (CCW winding)
-		 0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
-		-0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
-		 0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
-		 0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
-		// front face (CCW winding)
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
-		// left face (CCW)
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
-		-0.5f, -0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
-		-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
-		-0.5f,  0.5f,  0.5f,  1.0f, 1.0f, // top-right
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
-		// right face (CCW)
-		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
-		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
-		 0.5f,  0.5f,  0.5f,  0.0f, 1.0f, // top-left
-		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
-		// bottom face (CCW)      
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
-		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, // bottom-right
-		 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, // top-right
-		 0.5f, -0.5f,  0.5f,  1.0f, 1.0f, // top-right
-		-0.5f, -0.5f,  0.5f,  0.0f, 1.0f, // top-left
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, // bottom-left
-		// top face (CCW)
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, // bottom-right
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, // top-right
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, // top-left
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, // bottom-left
+		 // position           normal
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
 	};
 
 	VertexBuffer vbo(vertices, sizeof(vertices));
@@ -142,8 +145,11 @@ int main()
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	// position
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	// normal
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+	// glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
 	
 	VertexArray lightVao;
 	lightVao.Bind();
@@ -151,18 +157,19 @@ int main()
 
 	// only use position, dont need texture
 	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)0);
+	// position
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
 
 	lightVao.Unbind();
 
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_CULL_FACE);
+	// glEnable(GL_CULL_FACE);
 
 	// Textures
-	glActiveTexture(GL_TEXTURE0);
-	Texture fTexture("./res/textures/container.jpg");
-	glActiveTexture(GL_TEXTURE1);
-	Texture sTexture("./res/textures/container.jpg");
+	// glActiveTexture(GL_TEXTURE0);
+	// Texture fTexture("./res/textures/container.jpg");
+	// glActiveTexture(GL_TEXTURE1);
+	// Texture sTexture("./res/textures/container.jpg");
 
 	// Shaders
 	Shader cubeShader("./res/shaders/cube.vert", "./res/shaders/cube.frag");
@@ -172,6 +179,7 @@ int main()
 	{
 		glm::vec3 position;
 		glm::vec3 color;
+		bool render;
 	};
 
 	struct Light : Cube
@@ -180,15 +188,33 @@ int main()
 	};
 
 	std::vector<Cube> cubes = {
-		{ {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 1.0f} },
-		//{0.0f, 0.0f, -10.0f}
+		{ {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.8f}, true },
 	};
 
-	Light ambientLight;
-	ambientLight.position = { 0.0f, 10.0f, 0.0f };
-	ambientLight.color = { 1.0f, 1.0f, 1.0f };
-	ambientLight.strength = 0.1f;
-	
+	/* for (int x = 0; x < 15; x++)
+	{
+		for (int y = 0; y < 15; y++)
+		{
+			for (int z = 0; z < 15; z++)
+			{
+				Cube cube;
+				cube.position = { x, y, z };
+				cube.color = { 1.0f, 1.0f, 1.0f };
+				cubes.push_back(cube);
+			}
+		}
+	} */
+
+	std::vector<Light> lights = {
+		// ambient
+		{ glm::vec3(20.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), true, 0.1f },
+		// diffuse & specular
+		{ glm::vec3(1.0f, 3.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), true, 1.0f },
+	};
+
+	int* yes = new int;
+	delete yes;
+
 	int selectedObject = 0;
 	Renderer renderer;
 	while (!glfwWindowShouldClose(window))
@@ -203,7 +229,7 @@ int main()
 		//renderer.Render(vao, sProgram, camera, cubes, width, height);
 
 		// wireframe mode
-		glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
 		glm::mat4x4 view = camera.GetView();
 		glm::mat4x4 projection(1.0f);
@@ -217,34 +243,52 @@ int main()
 		lightShader.Set("uProjection", projection);
 		
 		lightVao.Bind();
+
+		//lights.at(1).position.x += cosf(glfwGetTime()) * 0.1f;
+		lights.at(1).position.z += cosf(glfwGetTime()) * 0.1f, 0.0f;
+		lights.at(1).position.y = lights.at(1).position.z;
 		
-		glm::mat4x4 model(1.0f);
+		for (const Light& light : lights)
+		{
+			glm::mat4x4 model(1.0f);
+			model = glm::translate(model, light.position);
+			lightShader.Set("uModel", model);
+			lightShader.Set("uColor", light.color * light.strength);
+			if (light.render)
+				glDrawArrays(GL_TRIANGLES, 0, 36);
+		}
+
 		
-		model = glm::translate(model, ambientLight.position);
-		lightShader.Set("uModel", model);
-		lightShader.Set("uColor", ambientLight.color * ambientLight.strength);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
 
 		// Cubes
 		cubeShader.Use();
 
-		cubeShader.Set("uFirstTexture", glm::ivec1(0));
-		cubeShader.Set("uSecondTexture", glm::ivec1(1));
+		// cubeShader.Set("uFirstTexture", glm::ivec1(0));
+		// cubeShader.Set("uSecondTexture", glm::ivec1(1));
 
 		cubeShader.Set("uView", view);
 		cubeShader.Set("uProjection", projection);
 
+		cubeShader.Set("uViewPos", camera.position);
+
+		// ambient
+		cubeShader.Set("uAmbientColor", lights.at(0).color* lights.at(0).strength);
+		// diffuse & specular
+		cubeShader.Set("uLightPos", lights.at(1).position);
+		cubeShader.Set("uLightColor", lights.at(1).color* lights.at(1).strength);
+
 		vao.Bind();
 
-		for (const Cube cube : cubes)
+		for (const Cube& cube : cubes)
 		{
 			glm::mat4x4 model(1.0f);
 			model = glm::translate(model, cube.position);
 			// model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			cubeShader.Set("uModel", model);
 			cubeShader.Set("uColor", cube.color);
-			cubeShader.Set("uLightColor", ambientLight.color * ambientLight.strength);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
+			
+			if (cube.render)
+				glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
 		// feed inputs to dear imgui, start new frame
@@ -253,55 +297,73 @@ int main()
 		ImGui::NewFrame();
 
 		// imgui render
+		// Camera
 		ImGui::Begin("Camera");
 
 		ImGui::Text("Speed");
-		ImGui::InputFloat("", &Camera::Movement::Speed);
-		ImGui::SliderFloat("", &Camera::Movement::Speed, 1.0f, 50.0f);
+		ImGui::SliderFloat("##speed", &Camera::Movement::Speed, 1.0f, 50.0f);
 
 		ImGui::Spacing();
 
 		ImGui::Text("Position");
-		ImGui::InputFloat("X", &camera.position.x);
-		ImGui::InputFloat("Y", &camera.position.y);
-		ImGui::InputFloat("Z", &camera.position.z);
+		ImGui::InputFloat3("XYZ", &camera.position.x);
 		ImGui::Text("Rotation");
-		ImGui::InputFloat("X", &camera.rotation.x);
-		ImGui::InputFloat("Y", &camera.rotation.y);
-		ImGui::InputFloat("Z", &camera.rotation.z);
+		ImGui::InputFloat3("XYZ", &camera.rotation.x);
 
 		ImGui::Spacing();
 
-		ImGui::SliderFloat("FOV", &camera.fov, 0.0f, 90.0f, std::to_string(camera.fov).c_str(), 1.0f);
+		ImGui::Text("FOV");
+		ImGui::SliderFloat("##fov", &camera.fov, 0.0f, 180.0f);
 		ImGui::End();
 
-		ImGui::Begin("Ambient light");
-		
-		ImGui::SliderFloat("Strength", &ambientLight.strength, 0.0f, 1.0f);
-
-		ImGui::Spacing();
-		
-		float* lightColors[3] = { &ambientLight.color.x, &ambientLight.color.y, &ambientLight.color.z };
-		ImGui::ColorPicker3("Color", *lightColors);
-		
-		ImGui::Text("Position");
-		float* lightPosition[3] = { &ambientLight.position.x, &ambientLight.position.y, &ambientLight.position.z };
-		ImGui::InputFloat3("Input", *lightPosition);
-		
-		ImGui::End();
-
+		// Objects
 		ImGui::Begin("Objects");
 		for (uint32_t i = 0; i < cubes.size(); i++)
 			if (ImGui::Button(std::string(std::to_string(i) + "# object").c_str()))
 				selectedObject = i;
 		ImGui::End();
 
+		// Object
 		ImGui::Begin("Object");
+
 		ImGui::Text("Position");
-		float* position[3] = { &cubes.at(selectedObject).position.x, &cubes.at(selectedObject).position.y, &cubes.at(selectedObject).position.z };
-		ImGui::InputFloat3("Input", *position);
+		ImGui::SliderFloat3("Input", &cubes.at(selectedObject).position.x, -100.0f, 100.0f);
+		
+		ImGui::Checkbox("Render", &cubes.at(selectedObject).render);
+
 		ImGui::End();
 
+		// Ambient lights
+		ImGui::Begin("Ambient light");
+
+		ImGui::SliderFloat("Strength", &lights.at(0).strength, 0.0f, 1.0f);
+
+		ImGui::Spacing();
+
+		ImGui::ColorPicker3("Color", &lights.at(0).color.x);
+
+		ImGui::Spacing();
+
+		ImGui::Text("Position");
+		ImGui::SliderFloat3("XYZ", &lights.at(0).position.x, -100.0f, 100.0f);
+
+		ImGui::End();
+
+		// Diffuse light
+		ImGui::Begin("Diffuse & specular light");
+
+		ImGui::SliderFloat("Strength", &lights.at(1).strength, 0.0f, 1.0f);
+
+		ImGui::Spacing();
+
+		ImGui::ColorPicker3("Color", &lights.at(1).color.x);
+
+		ImGui::Spacing();
+
+		ImGui::Text("Position");
+		ImGui::SliderFloat3("XYZ", &lights.at(1).position.x, -100.0f, 100.0f);
+
+		ImGui::End();
 
 		// Render dear imgui into screen
 		ImGui::Render();
@@ -323,7 +385,12 @@ int main()
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (showCursor) return;
+	if (showCursor)
+	{
+		lastMouse = { xpos, ypos };
+		return;
+	}
+
 	glm::vec2 pos = glm::vec2(xpos, ypos);
 	glm::vec2 offset;
 
@@ -341,15 +408,18 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 	camera.UpdateRotation(offset);
 }
 
-int multiplier = 1;
+const float UI_SWITCH_COOLDOWN = 0.3f;
 float lastUsage = -5.0f;
 void processInput(GLFWwindow* window)
 {
-	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS && (glfwGetTime() - lastUsage > 5.0f))
+	if (glfwGetKey(window, GLFW_KEY_V) == GLFW_PRESS && (glfwGetTime() - lastUsage > UI_SWITCH_COOLDOWN))
 	{
 		lastUsage = glfwGetTime();
 		showCursor = !showCursor;
 		glfwSetInputMode(window, GLFW_CURSOR, showCursor ? GLFW_CURSOR_NORMAL : GLFW_CURSOR_DISABLED);
+		showCursor == false ? 
+			ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_NoMouse 
+			: ImGui::GetIO().ConfigFlags &= ~ImGuiConfigFlags_NoMouse;
 	}
 		
 
@@ -371,4 +441,96 @@ void framebuffer_size_callback(GLFWwindow* window, int w, int h)
 {
 	width = w, height = h;
 	glViewport(0, 0, w, h);
+}
+
+void Style()
+{
+	ImGuiStyle& style = ImGui::GetStyle();
+	ImVec4* colors = style.Colors;
+
+	/// 0 = FLAT APPEARENCE
+	/// 1 = MORE "3D" LOOK
+	int is3D = 0;
+
+	colors[ImGuiCol_Text] = ImVec4(1.00f, 1.00f, 1.00f, 1.00f);
+	colors[ImGuiCol_TextDisabled] = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
+	colors[ImGuiCol_ChildBg] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+	colors[ImGuiCol_WindowBg] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+	colors[ImGuiCol_PopupBg] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+	colors[ImGuiCol_Border] = ImVec4(0.12f, 0.12f, 0.12f, 0.71f);
+	colors[ImGuiCol_BorderShadow] = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
+	colors[ImGuiCol_FrameBg] = ImVec4(0.42f, 0.42f, 0.42f, 0.54f);
+	colors[ImGuiCol_FrameBgHovered] = ImVec4(0.42f, 0.42f, 0.42f, 0.40f);
+	colors[ImGuiCol_FrameBgActive] = ImVec4(0.56f, 0.56f, 0.56f, 0.67f);
+	colors[ImGuiCol_TitleBg] = ImVec4(0.19f, 0.19f, 0.19f, 1.00f);
+	colors[ImGuiCol_TitleBgActive] = ImVec4(0.22f, 0.22f, 0.22f, 1.00f);
+	colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.17f, 0.17f, 0.17f, 0.90f);
+	colors[ImGuiCol_MenuBarBg] = ImVec4(0.335f, 0.335f, 0.335f, 1.000f);
+	colors[ImGuiCol_ScrollbarBg] = ImVec4(0.24f, 0.24f, 0.24f, 0.53f);
+	colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
+	colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.52f, 0.52f, 0.52f, 1.00f);
+	colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.76f, 0.76f, 0.76f, 1.00f);
+	colors[ImGuiCol_CheckMark] = ImVec4(0.65f, 0.65f, 0.65f, 1.00f);
+	colors[ImGuiCol_SliderGrab] = ImVec4(0.52f, 0.52f, 0.52f, 1.00f);
+	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.64f, 0.64f, 0.64f, 1.00f);
+	colors[ImGuiCol_Button] = ImVec4(0.54f, 0.54f, 0.54f, 0.35f);
+	colors[ImGuiCol_ButtonHovered] = ImVec4(0.52f, 0.52f, 0.52f, 0.59f);
+	colors[ImGuiCol_ButtonActive] = ImVec4(0.76f, 0.76f, 0.76f, 1.00f);
+	colors[ImGuiCol_Header] = ImVec4(0.38f, 0.38f, 0.38f, 1.00f);
+	colors[ImGuiCol_HeaderHovered] = ImVec4(0.47f, 0.47f, 0.47f, 1.00f);
+	colors[ImGuiCol_HeaderActive] = ImVec4(0.76f, 0.76f, 0.76f, 0.77f);
+	colors[ImGuiCol_Separator] = ImVec4(0.000f, 0.000f, 0.000f, 0.137f);
+	colors[ImGuiCol_SeparatorHovered] = ImVec4(0.700f, 0.671f, 0.600f, 0.290f);
+	colors[ImGuiCol_SeparatorActive] = ImVec4(0.702f, 0.671f, 0.600f, 0.674f);
+	colors[ImGuiCol_ResizeGrip] = ImVec4(0.26f, 0.59f, 0.98f, 0.25f);
+	colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+	colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+	colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
+	colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
+	colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+	colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
+	colors[ImGuiCol_TextSelectedBg] = ImVec4(0.73f, 0.73f, 0.73f, 0.35f);
+	colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+	colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
+	colors[ImGuiCol_NavHighlight] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+	colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+	colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+
+	style.PopupRounding = 3;
+
+	style.WindowPadding = ImVec2(4, 4);
+	style.FramePadding = ImVec2(6, 4);
+	style.ItemSpacing = ImVec2(6, 2);
+
+	style.ScrollbarSize = 18;
+
+	style.WindowBorderSize = 1;
+	style.ChildBorderSize = 1;
+	style.PopupBorderSize = 1;
+	style.FrameBorderSize = is3D;
+
+	style.WindowRounding = 3;
+	style.ChildRounding = 3;
+	style.FrameRounding = 3;
+	style.ScrollbarRounding = 2;
+	style.GrabRounding = 3;
+
+#ifdef IMGUI_HAS_DOCK 
+	style.TabBorderSize = is3D;
+	style.TabRounding = 3;
+
+	colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.38f, 0.38f, 0.38f, 1.00f);
+	colors[ImGuiCol_Tab] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+	colors[ImGuiCol_TabHovered] = ImVec4(0.40f, 0.40f, 0.40f, 1.00f);
+	colors[ImGuiCol_TabActive] = ImVec4(0.33f, 0.33f, 0.33f, 1.00f);
+	colors[ImGuiCol_TabUnfocused] = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+	colors[ImGuiCol_TabUnfocusedActive] = ImVec4(0.33f, 0.33f, 0.33f, 1.00f);
+	colors[ImGuiCol_DockingPreview] = ImVec4(0.85f, 0.85f, 0.85f, 0.28f);
+
+	if (ImGui::GetIO().ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+	{
+		style.WindowRounding = 0.0f;
+		style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+	}
+#endif
 }
