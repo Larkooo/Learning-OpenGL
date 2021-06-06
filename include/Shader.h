@@ -19,12 +19,16 @@ public:
     ~Shader();
 
     // use/activate the shader
-    void Use() const;
+    void Bind() const;
+    void Unbind() const;
     // utility uniform functions
     template<typename T>
     void Set(const std::string& name, T value) const;
+    int GetUniformLocation(const std::string& name) const;
+
 };
 
+// this needs to be here
 template<typename T>
 inline void Shader::Set(const std::string& name, T value) const
 {

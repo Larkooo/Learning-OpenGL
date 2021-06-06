@@ -25,6 +25,7 @@
 #include <sstream>
 #include <fstream>
 #include <vector>
+#include <memory>
 
 int width = 1280, height = 720;
 
@@ -175,20 +176,41 @@ int main()
 	Shader cubeShader("./res/shaders/cube.vert", "./res/shaders/cube.frag");
 	Shader lightShader("./res/shaders/light.vert", "./res/shaders/light.frag");
 
+	struct Material
+	{
+		glm::vec3 ambient;
+		glm::vec3 diffuse;
+		glm::vec3 specular;
+		float shininess;
+	};
+
 	struct Cube 
 	{
 		glm::vec3 position;
 		glm::vec3 color;
+		Material material;
 		bool render;
 	};
 
-	struct Light : Cube
+	struct Light
 	{
+		glm::vec3 position;
+
+		glm::vec3 ambient;
+		glm::vec3 diffuse;
+		glm::vec3 specular;
 		float strength;
+		
+		bool render;
 	};
 
+	/* struct Light : Cube
+	{
+		float strength;
+	};*/
+
 	std::vector<Cube> cubes = {
-		{ {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.8f}, true },
+		{ {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.8f}, { glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(0.5f, 0.5f, 0.5f), 32.0f }, true },
 	};
 
 	/* for (int x = 0; x < 15; x++)
@@ -205,15 +227,18 @@ int main()
 		}
 	} */
 
-	std::vector<Light> lights = {
-		// ambient
-		{ glm::vec3(20.0f, 20.0f, 0.0f), glm::vec3(0.0f, 0.0f, 0.0f), true, 0.1f },
-		// diffuse & specular
-		{ glm::vec3(1.0f, 3.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), true, 1.0f },
-	};
+	std::vector<Light> lights = std::vector<Light>();
 
-	int* yes = new int;
-	delete yes;
+	Light light;
+	light.position = { 3.0f, 3.0f, 0.0f };
+	light.ambient = { 0.2f, 0.2f, 0.2f };
+	light.diffuse = { 0.5f, 0.5f, 0.5f };
+	light.specular = { 1.0f, 1.0f, 1.0f };
+	light.strength = 1.0f;
+	light.render = true;
+
+	lights.push_back(light);
+	
 
 	int selectedObject = 0;
 	Renderer renderer;
@@ -237,31 +262,29 @@ int main()
 		projection = glm::perspective(glm::radians(camera.fov), (float)width / (float)height, 0.1f, 100.0f);
 
 		// Lights
-		lightShader.Use();
+		lightShader.Bind();
 		
 		lightShader.Set("uView", view);
 		lightShader.Set("uProjection", projection);
 		
 		lightVao.Bind();
 
-		//lights.at(1).position.x += cosf(glfwGetTime()) * 0.1f;
-		lights.at(1).position.z += cosf(glfwGetTime()) * 0.1f, 0.0f;
-		lights.at(1).position.y = lights.at(1).position.z;
+		// lights.at(1).position.x += cosf(glfwGetTime()) * 0.1f;
+		// lights.at(0).position.z += cosf(glfwGetTime()) * 0.1f, 0.0f;
+		// lights.at(0).position.y = lights.at(0).position.z;
 		
 		for (const Light& light : lights)
 		{
 			glm::mat4x4 model(1.0f);
 			model = glm::translate(model, light.position);
 			lightShader.Set("uModel", model);
-			lightShader.Set("uColor", light.color * light.strength);
+			lightShader.Set("uColor", glm::vec3(1.0f, 1.0f, 1.0f) * light.strength);
 			if (light.render)
 				glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		
-
 		// Cubes
-		cubeShader.Use();
+		cubeShader.Bind();
 
 		// cubeShader.Set("uFirstTexture", glm::ivec1(0));
 		// cubeShader.Set("uSecondTexture", glm::ivec1(1));
@@ -271,11 +294,11 @@ int main()
 
 		cubeShader.Set("uViewPos", camera.position);
 
-		// ambient
-		cubeShader.Set("uAmbientColor", lights.at(0).color* lights.at(0).strength);
-		// diffuse & specular
-		cubeShader.Set("uLightPos", lights.at(1).position);
-		cubeShader.Set("uLightColor", lights.at(1).color* lights.at(1).strength);
+		cubeShader.Set("uLight.position", lights.at(0).position);
+
+		cubeShader.Set("uLight.ambient", lights.at(0).ambient);
+		cubeShader.Set("uLight.diffuse", lights.at(0).diffuse);
+		cubeShader.Set("uLight.specular", lights.at(0).specular);
 
 		vao.Bind();
 
@@ -286,7 +309,10 @@ int main()
 			// model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			cubeShader.Set("uModel", model);
 			cubeShader.Set("uColor", cube.color);
-			
+			cubeShader.Set("uMaterial.ambient", cube.material.ambient);
+			cubeShader.Set("uMaterial.diffuse", cube.material.diffuse);
+			cubeShader.Set("uMaterial.specular", cube.material.specular);
+			cubeShader.Set("uMaterial.shininess", glm::vec1(cube.material.shininess));
 			if (cube.render)
 				glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
@@ -327,41 +353,35 @@ int main()
 		ImGui::Begin("Object");
 
 		ImGui::Text("Position");
-		ImGui::SliderFloat3("Input", &cubes.at(selectedObject).position.x, -100.0f, 100.0f);
-		
+		ImGui::SliderFloat3("XYZ", &cubes.at(selectedObject).position.x, -100.0f, 100.0f);
+
+		ImGui::Spacing();
+
+		ImGui::Text("Material");
+		ImGui::ColorEdit3("Ambient", &cubes.at(selectedObject).material.ambient.x);
+		ImGui::ColorEdit3("Diffuse", &cubes.at(selectedObject).material.diffuse.x);
+		ImGui::ColorEdit3("Specular", &cubes.at(selectedObject).material.specular.x);
+		ImGui::SliderFloat("Shininess", &cubes.at(selectedObject).material.shininess, 0.0f, 100.0f);
+
 		ImGui::Checkbox("Render", &cubes.at(selectedObject).render);
 
 		ImGui::End();
 
-		// Ambient lights
-		ImGui::Begin("Ambient light");
+		// Light
+		ImGui::Begin("Light");
 
-		ImGui::SliderFloat("Strength", &lights.at(0).strength, 0.0f, 1.0f);
+		// ImGui::SliderFloat("Strength", &lights.at(0).strength, 0.0f, 1.0f);
 
-		ImGui::Spacing();
-
-		ImGui::ColorPicker3("Color", &lights.at(0).color.x);
-
-		ImGui::Spacing();
+		// ImGui::Spacing();
 
 		ImGui::Text("Position");
 		ImGui::SliderFloat3("XYZ", &lights.at(0).position.x, -100.0f, 100.0f);
 
-		ImGui::End();
-
-		// Diffuse light
-		ImGui::Begin("Diffuse & specular light");
-
-		ImGui::SliderFloat("Strength", &lights.at(1).strength, 0.0f, 1.0f);
-
 		ImGui::Spacing();
 
-		ImGui::ColorPicker3("Color", &lights.at(1).color.x);
-
-		ImGui::Spacing();
-
-		ImGui::Text("Position");
-		ImGui::SliderFloat3("XYZ", &lights.at(1).position.x, -100.0f, 100.0f);
+		ImGui::ColorEdit3("Ambient", &lights.at(0).ambient.x);
+		ImGui::ColorEdit3("Diffuse", &lights.at(0).diffuse.x);
+		ImGui::ColorEdit3("Specular", &lights.at(0).specular.x);
 
 		ImGui::End();
 

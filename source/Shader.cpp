@@ -89,9 +89,19 @@ Shader::~Shader()
     glDeleteProgram(m_Id);
 }
 
-void Shader::Use() const
+void Shader::Bind() const
 {
     glUseProgram(m_Id);
+}
+
+void Shader::Unbind() const
+{
+    glUseProgram(0);
+}
+
+int Shader::GetUniformLocation(const std::string& name) const
+{
+    return glGetUniformLocation(m_Id, name.c_str());
 }
 
 

@@ -11,7 +11,7 @@ void Renderer::Clear()
 
 void Renderer::Render(const VertexArray& vao, const Shader& sProgram, const Camera& camera, std::vector<glm::vec3> cubes, float width, float height)
 {
-	sProgram.Use();
+	sProgram.Bind();
 
 	sProgram.Set("uFirstTexture", glm::ivec1(0));
 	sProgram.Set("uSecondTexture", glm::ivec1(1));
