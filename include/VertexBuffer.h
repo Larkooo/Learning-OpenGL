@@ -9,6 +9,7 @@ class VertexBuffer
 	uint32_t m_Id;
 public:
 	VertexBuffer(const void* data, uint32_t size);
+	inline VertexBuffer();
 	~VertexBuffer();
 
 	void Bind() const;

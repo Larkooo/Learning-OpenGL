@@ -2,6 +2,10 @@
 
 #include <GLFW/glfw3.h>
 
+#ifdef _WIN32
+#include <Windows.h>
+#endif
+
 #include "vendor/imgui/imgui.h"
 #include "vendor/imgui/imgui_impl_glfw.h"
 #include "vendor/imgui/imgui_impl_opengl3.h"
@@ -85,54 +89,78 @@ int main()
 	ImGui::StyleColorsDark();
 	// Style();
 
-	VertexArray vao;
-	vao.Bind();
-
 	float vertices[] = {
-		 // position           normal
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,
+		// positions          // normals           // texture coords
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f,  0.0f,
 
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  1.0f,  1.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f,  0.0f,  1.0f,  0.0f,  0.0f,
 
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		-0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f,  0.0f,
 
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,
-		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f,  1.0f,
 
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,
-		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f,
+		 0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  1.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+		 0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f,  0.0f,
+		-0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  0.0f,
+		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 	};
 
+	float pointerVertices[] = {
+		 0.5f, -1.0f,
+		-0.5f, -1.0f,
+		 0.5f,  1.0f,
+		-0.5f, -1.0f,
+		-0.5f,  1.0f,
+		 0.5f,  1.0f,
+
+		-1.0f, -0.5f,
+		-1.0f,  0.5f,
+		 1.0f,  0.5f,
+		-1.0f, -0.5f,
+		 1.0f,  0.5f,
+		 1.0f, -0.5f
+
+	};
+
+	VertexArray hudVao;
+	hudVao.Bind();
+	VertexBuffer hudVbo(pointerVertices, sizeof(pointerVertices));
+
+	glEnableVertexAttribArray(0);
+	// position
+	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
+
+	VertexArray vao;
+	vao.Bind();
 	VertexBuffer vbo(vertices, sizeof(vertices));
 	// dont need to bind, already bound 
 
@@ -146,20 +174,24 @@ int main()
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
+	glEnableVertexAttribArray(2);
 	// position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 	// normal
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
-	// glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void*)(3 * sizeof(float)));
+	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+	// texture coords
+	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(6 * sizeof(float)));
 	
 	VertexArray lightVao;
 	lightVao.Bind();
+	// we use the same vbo because we want to also use a cube for
+	// the mesh of the lights. we wont use the normals and texture coordinates tho (for now atleast)
 	vbo.Bind();
 
 	// only use position, dont need texture
 	glEnableVertexAttribArray(0);
 	// position
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
 
 	lightVao.Unbind();
 
@@ -167,10 +199,12 @@ int main()
 	// glEnable(GL_CULL_FACE);
 
 	// Textures
-	// glActiveTexture(GL_TEXTURE0);
-	// Texture fTexture("./res/textures/container.jpg");
-	// glActiveTexture(GL_TEXTURE1);
-	// Texture sTexture("./res/textures/container.jpg");
+	glActiveTexture(GL_TEXTURE0);
+	Texture container("./res/textures/container2.png");
+	glActiveTexture(GL_TEXTURE1);
+	Texture containerSpecular("./res/textures/container2_specular.png");
+	glActiveTexture(GL_TEXTURE2);
+	Texture containerEmission("./res/textures/matrix.jpg");
 
 	// Shaders
 	Shader cubeShader("./res/shaders/cube.vert", "./res/shaders/cube.frag");
@@ -178,27 +212,47 @@ int main()
 
 	struct Material
 	{
-		glm::vec3 ambient;
-		glm::vec3 diffuse;
-		glm::vec3 specular;
+		// diffuse texture index
+		int diffuse;
+		// specular texture index
+		int specular;
+		// emission texture index
+		int emission;
 		float shininess;
 	};
 
 	struct Cube 
 	{
 		glm::vec3 position;
-		glm::vec3 color;
 		Material material;
 		bool render;
 	};
 
-	struct Light
+	struct DirectionLight
+	{
+		glm::vec3 direction;
+
+		glm::vec3 ambient;
+		glm::vec3 diffuse;
+		glm::vec3 specular;
+
+		float strength;
+		
+		bool render;
+	};
+
+	struct PointLight
 	{
 		glm::vec3 position;
 
 		glm::vec3 ambient;
 		glm::vec3 diffuse;
 		glm::vec3 specular;
+
+		float constant;
+		float linear;
+		float quadratic;
+
 		float strength;
 		
 		bool render;
@@ -210,7 +264,7 @@ int main()
 	};*/
 
 	std::vector<Cube> cubes = {
-		{ {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f, 0.8f}, { glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(1.0f, 0.5f, 0.31f), glm::vec3(0.5f, 0.5f, 0.5f), 32.0f }, true },
+		{ {0.0f, 0.0f, 0.0f}, { 0, 1, 2, 32.0f }, true },
 	};
 
 	/* for (int x = 0; x < 15; x++)
@@ -227,18 +281,34 @@ int main()
 		}
 	} */
 
-	std::vector<Light> lights = std::vector<Light>();
+	std::vector<PointLight> lights = std::vector<PointLight>();
 
-	Light light;
-	light.position = { 3.0f, 3.0f, 0.0f };
-	light.ambient = { 0.2f, 0.2f, 0.2f };
-	light.diffuse = { 0.5f, 0.5f, 0.5f };
-	light.specular = { 1.0f, 1.0f, 1.0f };
-	light.strength = 1.0f;
-	light.render = true;
+	// DirectionLight dirLight = { {0.5f, 0.2f, 0.4f},  };
 
-	lights.push_back(light);
-	
+	PointLight pointLight;
+	pointLight.position = { 3.0f, 3.0f, 0.0f };
+	pointLight.ambient = { 0.2f, 0.2f, 0.2f };
+	pointLight.diffuse = { 0.5f, 0.5f, 0.5f };
+	pointLight.specular = { 1.0f, 1.0f, 1.0f };
+	pointLight.constant = 1.0f;
+	pointLight.linear = 0.09f;
+	pointLight.quadratic = 0.032f;
+	pointLight.strength = 1.0f;
+	pointLight.render = true;
+
+	PointLight pointLight2;
+	pointLight2.position = { 3.0f, 3.0f, 0.0f };
+	pointLight2.ambient = { 0.2f, 0.2f, 0.2f };
+	pointLight2.diffuse = { 0.5f, 0.5f, 0.5f };
+	pointLight2.specular = { 1.0f, 1.0f, 1.0f };
+	pointLight2.constant = 1.0f;
+	pointLight2.linear = 0.09f;
+	pointLight2.quadratic = 0.032f;
+	pointLight2.strength = 1.0f;
+	pointLight2.render = true;
+
+	lights.push_back(pointLight);
+	lights.push_back(pointLight2);
 
 	int selectedObject = 0;
 	Renderer renderer;
@@ -251,6 +321,7 @@ int main()
 		processInput(window);
 
 		renderer.Clear();
+		
 		//renderer.Render(vao, sProgram, camera, cubes, width, height);
 
 		// wireframe mode
@@ -263,42 +334,38 @@ int main()
 
 		// Lights
 		lightShader.Bind();
-		
+
 		lightShader.Set("uView", view);
 		lightShader.Set("uProjection", projection);
-		
+
 		lightVao.Bind();
 
-		// lights.at(1).position.x += cosf(glfwGetTime()) * 0.1f;
-		// lights.at(0).position.z += cosf(glfwGetTime()) * 0.1f, 0.0f;
-		// lights.at(0).position.y = lights.at(0).position.z;
-		
-		for (const Light& light : lights)
+		int lightIndex = 0;
+		for (const PointLight& light : lights)
 		{
 			glm::mat4x4 model(1.0f);
 			model = glm::translate(model, light.position);
+			lightShader.Bind();
 			lightShader.Set("uModel", model);
-			lightShader.Set("uColor", glm::vec3(1.0f, 1.0f, 1.0f) * light.strength);
+			lightShader.Set("uColor", (light.ambient * light.diffuse * light.specular) * light.strength);
+			
 			if (light.render)
 				glDrawArrays(GL_TRIANGLES, 0, 36);
+			lightIndex++;
 		}
 
 		// Cubes
 		cubeShader.Bind();
-
-		// cubeShader.Set("uFirstTexture", glm::ivec1(0));
-		// cubeShader.Set("uSecondTexture", glm::ivec1(1));
 
 		cubeShader.Set("uView", view);
 		cubeShader.Set("uProjection", projection);
 
 		cubeShader.Set("uViewPos", camera.position);
 
-		cubeShader.Set("uLight.position", lights.at(0).position);
-
-		cubeShader.Set("uLight.ambient", lights.at(0).ambient);
-		cubeShader.Set("uLight.diffuse", lights.at(0).diffuse);
-		cubeShader.Set("uLight.specular", lights.at(0).specular);
+		cubeShader.Set("uDirLight.direction", glm::vec3(-0.2f, -1.0f, -0.3f));
+		cubeShader.Set("uDirLight.ambient", glm::vec3(0.05f, 0.05f, 0.05f));
+		cubeShader.Set("uDirLight.diffuse", glm::vec3(0.4f, 0.4f, 0.4f));
+		cubeShader.Set("uDirLight.specular", glm::vec3(0.5f, 0.5f, 0.5f));
 
 		vao.Bind();
 
@@ -308,14 +375,34 @@ int main()
 			model = glm::translate(model, cube.position);
 			// model = glm::rotate(model, glm::radians(-55.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 			cubeShader.Set("uModel", model);
-			cubeShader.Set("uColor", cube.color);
-			cubeShader.Set("uMaterial.ambient", cube.material.ambient);
-			cubeShader.Set("uMaterial.diffuse", cube.material.diffuse);
-			cubeShader.Set("uMaterial.specular", cube.material.specular);
+			cubeShader.Set("uMaterial.diffuse", glm::ivec1(cube.material.diffuse));
+			cubeShader.Set("uMaterial.specular", glm::ivec1(cube.material.specular));
+			cubeShader.Set("uMaterial.emission", glm::ivec1(cube.material.emission));
 			cubeShader.Set("uMaterial.shininess", glm::vec1(cube.material.shininess));
+			cubeShader.Set("uPointLightsCount", glm::ivec1(lights.size()));
+			for (int i = 0; i < lights.size(); i++)
+			{
+				cubeShader.Set(std::string("uPointLights[" + std::to_string(i) + "]" + ".position"), lights.at(i).position);
+				cubeShader.Set(std::string("uPointLights[" + std::to_string(i) + "]" + ".ambient"), lights.at(i).ambient);
+				cubeShader.Set(std::string("uPointLights[" + std::to_string(i) + "]" + ".diffuse"), lights.at(i).diffuse);
+				cubeShader.Set(std::string("uPointLights[" + std::to_string(i) + "]" + ".specular"), lights.at(i).specular);
+				cubeShader.Set(std::string("uPointLights[" + std::to_string(i) + "]" + ".constant"), glm::vec1(lights.at(i).constant));
+				cubeShader.Set(std::string("uPointLights[" + std::to_string(i) + "]" + ".linear"), glm::vec1(lights.at(i).linear));
+				cubeShader.Set(std::string("uPointLights[" + std::to_string(i) + "]" + ".quadratic"), glm::vec1(lights.at(i).quadratic));
+			}
 			if (cube.render)
 				glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
+
+		// HUD
+		glDisable(GL_DEPTH_TEST);
+		projection = glm::ortho(0.0f, (float)width, (float)height, 0.0f);
+		cubeShader.Set("uView", glm::mat4x4(1.0f));
+		cubeShader.Set("uProjection", projection);
+		cubeShader.Set("uModel", glm::mat4x4(1.0f));
+		hudVao.Bind();
+		glDrawArrays(GL_TRIANGLES, 0, 12);
+		glEnable(GL_DEPTH_TEST);
 
 		// feed inputs to dear imgui, start new frame
 		ImGui_ImplOpenGL3_NewFrame();
@@ -323,67 +410,111 @@ int main()
 		ImGui::NewFrame();
 
 		// imgui render
+		// 
 		// Camera
-		ImGui::Begin("Camera");
+		{
+			ImGui::Begin("Camera");
 
-		ImGui::Text("Speed");
-		ImGui::SliderFloat("##speed", &Camera::Movement::Speed, 1.0f, 50.0f);
+			ImGui::Text("Speed");
+			ImGui::SliderFloat("##speed", &Camera::Movement::Speed, 1.0f, 50.0f);
 
-		ImGui::Spacing();
+			ImGui::Spacing();
 
-		ImGui::Text("Position");
-		ImGui::InputFloat3("XYZ", &camera.position.x);
-		ImGui::Text("Rotation");
-		ImGui::InputFloat3("XYZ", &camera.rotation.x);
+			ImGui::Text("Position");
+			ImGui::InputFloat3("XYZ", &camera.position.x);
+			ImGui::Text("Rotation");
+			ImGui::InputFloat3("XYZ", &camera.rotation.x);
 
-		ImGui::Spacing();
+			ImGui::Spacing();
 
-		ImGui::Text("FOV");
-		ImGui::SliderFloat("##fov", &camera.fov, 0.0f, 180.0f);
-		ImGui::End();
+			ImGui::Text("FOV");
+			ImGui::SliderFloat("##fov", &camera.fov, 0.0f, 180.0f);
+			ImGui::End();
 
-		// Objects
-		ImGui::Begin("Objects");
-		for (uint32_t i = 0; i < cubes.size(); i++)
-			if (ImGui::Button(std::string(std::to_string(i) + "# object").c_str()))
-				selectedObject = i;
-		ImGui::End();
+			// Objects
+			ImGui::Begin("Objects");
+			for (uint32_t i = 0; i < cubes.size(); i++)
+				if (ImGui::Button(std::string(std::to_string(i) + "# object").c_str()))
+					selectedObject = i;
+			ImGui::End();
+		}
 
 		// Object
-		ImGui::Begin("Object");
+		{
+			ImGui::Begin("Object");
 
-		ImGui::Text("Position");
-		ImGui::SliderFloat3("XYZ", &cubes.at(selectedObject).position.x, -100.0f, 100.0f);
+			ImGui::Text("Position");
+			ImGui::SliderFloat3("XYZ", &cubes.at(selectedObject).position.x, -100.0f, 100.0f);
 
-		ImGui::Spacing();
+			ImGui::Spacing();
 
-		ImGui::Text("Material");
-		ImGui::ColorEdit3("Ambient", &cubes.at(selectedObject).material.ambient.x);
-		ImGui::ColorEdit3("Diffuse", &cubes.at(selectedObject).material.diffuse.x);
-		ImGui::ColorEdit3("Specular", &cubes.at(selectedObject).material.specular.x);
-		ImGui::SliderFloat("Shininess", &cubes.at(selectedObject).material.shininess, 0.0f, 100.0f);
+			ImGui::Text("Material");
+			
+			ImGui::Text("Diffuse");
+			ImGui::Text("Size : %i x %i", container.GetSize().x, container.GetSize().y);
+			ImGui::ImageButton((void*)(uintptr_t)container.GetId(), ImVec2(64, 64));
 
-		ImGui::Checkbox("Render", &cubes.at(selectedObject).render);
+			ImGui::Text("Specular");
+			ImGui::Text("Size : %i x %i", containerSpecular.GetSize().x, containerSpecular.GetSize().y);
+			ImGui::ImageButton((void*)(uintptr_t)containerSpecular.GetId(), ImVec2(64, 64));
+			/*if (ImGui::ImageButton((void*)(uintptr_t)containerSpecular.GetId(), ImVec2(64, 64)))
+			{
+				OPENFILENAMEA ofn;       // common dialog box structure
+				char szFile[260];       // buffer for file name
+				HWND hwnd = NULL;              // owner window
+				HANDLE hf;              // file handle
 
-		ImGui::End();
+				// Initialize OPENFILENAME
+				ZeroMemory(&ofn, sizeof(ofn));
+				ofn.lStructSize = sizeof(ofn);
+				ofn.hwndOwner = hwnd;
+				ofn.lpstrFile = szFile;
+				//
+				// Set lpstrFile[0] to '\0' so that GetOpenFileName does not 
+				// use the contents of szFile to initialize itself.
+				//
+				ofn.lpstrFile[0] = '\0';
+				ofn.nMaxFile = sizeof(szFile);
+				ofn.lpstrFilter = "All\0*.*\0Text\0*.TXT\0";
+				ofn.nFilterIndex = 1;
+				ofn.lpstrFileTitle = NULL;
+				ofn.nMaxFileTitle = 0;
+				ofn.lpstrInitialDir = NULL;
+				ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
+				// Display the Open dialog box. 
+
+				if (GetOpenFileNameA(&ofn))
+				{
+					glActiveTexture(GL_TEXTURE1);
+					containerSpecular = Texture(ofn.lpstrFile);
+				}		
+			} TODO*/
+			ImGui::SliderFloat("Shininess", &cubes.at(selectedObject).material.shininess, 0.0f, 100.0f);
+
+			ImGui::Checkbox("Render", &cubes.at(selectedObject).render);
+
+			ImGui::End();
+		}
 		// Light
-		ImGui::Begin("Light");
+		{
+			ImGui::Begin("Light");
 
-		// ImGui::SliderFloat("Strength", &lights.at(0).strength, 0.0f, 1.0f);
+			// ImGui::SliderFloat("Strength", &lights.at(0).strength, 0.0f, 1.0f);
 
-		// ImGui::Spacing();
+			// ImGui::Spacing();
 
-		ImGui::Text("Position");
-		ImGui::SliderFloat3("XYZ", &lights.at(0).position.x, -100.0f, 100.0f);
+			ImGui::Text("Position");
+			ImGui::SliderFloat3("XYZ", &lights.at(0).position.x, -100.0f, 100.0f);
 
-		ImGui::Spacing();
+			ImGui::Spacing();
 
-		ImGui::ColorEdit3("Ambient", &lights.at(0).ambient.x);
-		ImGui::ColorEdit3("Diffuse", &lights.at(0).diffuse.x);
-		ImGui::ColorEdit3("Specular", &lights.at(0).specular.x);
+			ImGui::ColorEdit3("Ambient", &lights.at(0).ambient.x);
+			ImGui::ColorEdit3("Diffuse", &lights.at(0).diffuse.x);
+			ImGui::ColorEdit3("Specular", &lights.at(0).specular.x);
 
-		ImGui::End();
+			ImGui::End();
+		}
 
 		// Render dear imgui into screen
 		ImGui::Render();

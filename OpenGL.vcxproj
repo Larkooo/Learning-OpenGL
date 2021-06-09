@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Mesh.cpp" />
     <ClCompile Include="source\Renderer.cpp" />
     <ClCompile Include="source\Camera.cpp" />
     <ClCompile Include="source\glad.c" />
@@ -172,6 +173,8 @@
     <ClInclude Include="include\VertexArray.h" />
     <ClInclude Include="include\VertexBuffer.h" />
     <ClInclude Include="include\Renderer.h" />
+    <ClInclude Include="include\Mesh.h" />
+    <ClInclude Include="include\Material.h" />
     <ClInclude Include="source\vendor\imgui\imconfig.h" />
     <ClInclude Include="source\vendor\imgui\imgui.h" />
     <ClInclude Include="source\vendor\imgui\imgui_impl_glfw.h" />
