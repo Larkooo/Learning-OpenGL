@@ -32,7 +32,7 @@ class Mesh
 public:
 	Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, Material material);
 
-	void Render(Shader& shader);
+	void Render(Shader& shader) const;
 
 	inline std::vector<Vertex> GetVertices() const { return m_Vertices; }
 	inline std::vector<uint32_t> GetIndices() const { return m_Indices; }

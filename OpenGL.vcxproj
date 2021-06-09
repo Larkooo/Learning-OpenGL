@@ -80,8 +80,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>C:\Users\Larko\source\repos\OpenGL\include;C:\Users\Larko\Desktop\development\cpp_projects\libs\glm;C:\Users\Larko\Desktop\development\cpp_projects\libs\glad\include;C:\Users\Larko\Desktop\development\cpp_projects\libs\glfw\include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Users\Larko\Desktop\development\cpp_projects\libs\glfw\lib-vc2019;$(LibraryPath)</LibraryPath>
+    <IncludePath>C:\Users\Larko\Desktop\development\cpp_projects\libs\assimp-5.0.1\build\include;C:\Users\Larko\Desktop\development\cpp_projects\libs\assimp-5.0.1\include;C:\Users\Larko\source\repos\OpenGL\include;C:\Users\Larko\Desktop\development\cpp_projects\libs\glm;C:\Users\Larko\Desktop\development\cpp_projects\libs\glad\include;C:\Users\Larko\Desktop\development\cpp_projects\libs\glfw\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\Users\Larko\Desktop\development\cpp_projects\libs\assimp-5.0.1\build\code\Release;C:\Users\Larko\Desktop\development\cpp_projects\libs\glfw\lib-vc2019;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -126,7 +126,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>assimp-vc142-mt.lib;glfw3.lib;opengl32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\Mesh.cpp" />
     <ClCompile Include="source\Renderer.cpp" />
     <ClCompile Include="source\Camera.cpp" />
@@ -175,6 +176,7 @@
     <ClInclude Include="include\Renderer.h" />
     <ClInclude Include="include\Mesh.h" />
     <ClInclude Include="include\Material.h" />
+    <ClInclude Include="include\Model.h" />
     <ClInclude Include="source\vendor\imgui\imconfig.h" />
     <ClInclude Include="source\vendor\imgui\imgui.h" />
     <ClInclude Include="source\vendor\imgui\imgui_impl_glfw.h" />

@@ -10,7 +10,7 @@ class IndexBuffer
 	uint32_t m_Count;
 public:
 	IndexBuffer(const uint32_t* data, uint32_t count);
-	inline IndexBuffer();
+	inline IndexBuffer() {};
 	~IndexBuffer();
 
 	void Bind() const;

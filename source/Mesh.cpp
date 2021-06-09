@@ -23,16 +23,15 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, Material
 	glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, textureCoords));
 }
 
-void Mesh::Render(Shader& shader)
-{
-	shader.Bind();
-	
+void Mesh::Render(Shader& shader) const
+{	
 	// set textures
 	shader.Set("uMaterial.diffuse", glm::ivec1(m_Material.GetDiffuse()));
 	shader.Set("uMaterial.specular", glm::ivec1(m_Material.GetSpecular()));
 	shader.Set("uMaterial.shininess", glm::vec1(m_Material.GetShininess()));
 
+	m_VAO.Bind();
 	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
 	
-
+	m_VAO.Unbind();
 }
