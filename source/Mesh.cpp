@@ -1,16 +1,22 @@
 #include "Mesh.h"
 #include "..\include\Mesh.h"
 
-Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, Material material)
+Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, std::vector<MeshTexture> textures)
 {
 	m_Vertices = vertices;
 	m_Indices = indices;
-	m_Material = material;
+	m_Textures = textures;
 
-	m_VAO = VertexArray();
+	/* m_VAO = VertexArray();
 	m_VAO.Bind();
-	m_VBO = VertexBuffer(m_Vertices.data(), sizeof(m_Vertices));
-	m_IBO = IndexBuffer(indices.data(), indices.size());
+	m_VBO = VertexBuffer(m_Vertices.data(), m_Vertices.size() * sizeof(Vertex));
+	m_IBO = IndexBuffer(indices.data(), indices.size());*/
+    m_VAO = std::unique_ptr<VertexArray>(new VertexArray());
+
+    m_VAO->Bind();
+
+    m_VBO = std::unique_ptr<VertexBuffer>(new VertexBuffer(vertices.data(), vertices.size() * sizeof(Vertex)));
+    m_IBO = std::unique_ptr<IndexBuffer>(new IndexBuffer(indices.data(), indices.size()));
 
 	// vertices
 	glEnableVertexAttribArray(0);
@@ -25,13 +31,29 @@ Mesh::Mesh(std::vector<Vertex> vertices, std::vector<uint32_t> indices, Material
 
 void Mesh::Render(Shader& shader) const
 {	
-	// set textures
-	shader.Set("uMaterial.diffuse", glm::ivec1(m_Material.GetDiffuse()));
-	shader.Set("uMaterial.specular", glm::ivec1(m_Material.GetSpecular()));
-	shader.Set("uMaterial.shininess", glm::vec1(m_Material.GetShininess()));
+    unsigned int diffuseNr = 1;
+    unsigned int specularNr = 1;
+   // std::cout << m_Textures[1].id << std::endl;
+    for (unsigned int i = 0; i < m_Textures.size(); i++)
+    {
+        glActiveTexture(GL_TEXTURE0 + i); // activate proper texture unit before binding
+        // retrieve texture number (the N in diffuse_textureN)
+        std::string number;
+        std::string name = m_Textures[i].type;
+        if (name == "texture_diffuse")
+            number = std::to_string(diffuseNr++);
+        else if (name == "texture_specular")
+            number = std::to_string(specularNr++);
 
-	m_VAO.Bind();
-	glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
-	
-	m_VAO.Unbind();
+        glBindTexture(GL_TEXTURE_2D, m_Textures[i].id);
+
+        shader.Set(("uMaterial." + name + number).c_str(), glm::ivec1(i));
+    }
+
+    // draw mesh
+    m_VAO->Bind();
+    glDrawElements(GL_TRIANGLES, m_Indices.size(), GL_UNSIGNED_INT, 0);
+    //std::cout << glGetError() << std::endl;
+    glBindVertexArray(0);
+    glActiveTexture(GL_TEXTURE0);
 }

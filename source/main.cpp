@@ -23,6 +23,7 @@
 #include "Texture.h"
 #include "Camera.h"
 #include "Renderer.h"
+#include "Model.h"
 
 #include <iostream>
 #include <string>
@@ -134,43 +135,9 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 	};
 
-	float pointerVertices[] = {
-		 0.5f, -1.0f,
-		-0.5f, -1.0f,
-		 0.5f,  1.0f,
-		-0.5f, -1.0f,
-		-0.5f,  1.0f,
-		 0.5f,  1.0f,
-
-		-1.0f, -0.5f,
-		-1.0f,  0.5f,
-		 1.0f,  0.5f,
-		-1.0f, -0.5f,
-		 1.0f,  0.5f,
-		 1.0f, -0.5f
-
-	};
-
-	VertexArray hudVao;
-	hudVao.Bind();
-	VertexBuffer hudVbo(pointerVertices, sizeof(pointerVertices));
-
-	glEnableVertexAttribArray(0);
-	// position
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
-
 	VertexArray vao;
 	vao.Bind();
 	VertexBuffer vbo(vertices, sizeof(vertices));
-	// dont need to bind, already bound 
-
-	/* uint32_t indices[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
-	};
-
-	IndexBuffer ebo(indices, 6);
-	// dont need to bind already boud */
 
 	glEnableVertexAttribArray(0);
 	glEnableVertexAttribArray(1);
@@ -206,9 +173,13 @@ int main()
 	glActiveTexture(GL_TEXTURE2);
 	Texture containerEmission("./res/textures/matrix.jpg");
 
+	// Models
+	Model backpack("C:/Users/Larko/Desktop/development/cpp_projects/LearnOpenGL/resources/objects/backpack/backpack.obj");
+
 	// Shaders
 	Shader cubeShader("./res/shaders/cube.vert", "./res/shaders/cube.frag");
 	Shader lightShader("./res/shaders/light.vert", "./res/shaders/light.frag");
+	Shader modelShader("./res/shaders/model.vert", "./res/shaders/model.frag");
 
 	struct Material
 	{
@@ -322,7 +293,7 @@ int main()
 
 		renderer.Clear();
 		
-		//renderer.Render(vao, sProgram, camera, cubes, width, height);
+		//renderer.Render();
 
 		// wireframe mode
 		// glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -355,6 +326,11 @@ int main()
 		}
 
 		// Cubes
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, container.GetId());
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, containerSpecular.GetId());
+		// glBindTexture(GL_TEXTURE_2D, containerEmission.GetId());
 		cubeShader.Bind();
 
 		cubeShader.Set("uView", view);
@@ -394,15 +370,19 @@ int main()
 				glDrawArrays(GL_TRIANGLES, 0, 36);
 		}
 
-		// HUD
-		glDisable(GL_DEPTH_TEST);
-		projection = glm::ortho(0.0f, (float)width, (float)height, 0.0f);
-		cubeShader.Set("uView", glm::mat4x4(1.0f));
-		cubeShader.Set("uProjection", projection);
-		cubeShader.Set("uModel", glm::mat4x4(1.0f));
-		hudVao.Bind();
-		glDrawArrays(GL_TRIANGLES, 0, 12);
-		glEnable(GL_DEPTH_TEST);
+		vao.Unbind();
+
+		modelShader.Bind();
+
+		modelShader.Set("uProjection", projection);
+		modelShader.Set("uView", view);
+		glm::mat4x4 model(1.0f);
+		model = glm::translate(model, glm::vec3(15.0f, 10.0f, 0.0f));
+		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
+		modelShader.Set("uModel", model);
+		backpack.Render(modelShader);
+
+		modelShader.Unbind();
 
 		// feed inputs to dear imgui, start new frame
 		ImGui_ImplOpenGL3_NewFrame();

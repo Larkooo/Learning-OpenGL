@@ -164,6 +164,7 @@
     <ClCompile Include="source\VertexArray.cpp" />
     <ClCompile Include="source\VertexBuffer.cpp" />
     <ClCompile Include="source\Texture.cpp" />
+    <ClCompile Include="source\World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Camera.h" />
@@ -185,12 +186,15 @@
     <ClInclude Include="source\vendor\imgui\imstb_rectpack.h" />
     <ClInclude Include="source\vendor\imgui\imstb_textedit.h" />
     <ClInclude Include="source\vendor\imgui\imstb_truetype.h" />
+    <ClInclude Include="include\World.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\cube.frag" />
     <None Include="res\shaders\light.frag" />
     <None Include="res\shaders\light.vert" />
     <None Include="res\shaders\cube.vert" />
+    <None Include="res\shaders\model.frag" />
+    <None Include="res\shaders\model.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

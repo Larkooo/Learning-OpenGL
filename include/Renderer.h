@@ -10,16 +10,18 @@
 #include "Shader.h"
 #include "VertexBuffer.h"
 #include "Camera.h"
+#include "World.h"
 
 #include <vector>
 
 class Renderer
 {
+	std::unique_ptr<World> m_World;
 public:
-	inline Renderer() {}
+	inline Renderer(World* worldptr) : m_World(std::unique_ptr<World>(worldptr)) {};
 	inline ~Renderer() {};
 
 	void Clear();
-	void Render(const VertexArray& vao, const Shader& sProgram, const Camera& camera, std::vector<glm::vec3> cubes, float width, float height);
+	void Render();
 };
 

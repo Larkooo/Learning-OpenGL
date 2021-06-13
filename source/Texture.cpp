@@ -3,7 +3,6 @@
 
 Texture::Texture(const char* filePath)
 {
-	//std::cout << filePath << std::endl;
 	stbi_set_flip_vertically_on_load(true);
 
 	int nrChannels;
