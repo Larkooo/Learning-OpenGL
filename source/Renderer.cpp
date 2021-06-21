@@ -11,4 +11,5 @@ void Renderer::Clear()
 
 void Renderer::Render()
 {
+	m_World->Render();
 }

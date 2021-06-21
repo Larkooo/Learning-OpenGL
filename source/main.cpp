@@ -25,6 +25,8 @@
 #include "Renderer.h"
 #include "Model.h"
 
+#include "PerlinNoise.h"
+
 #include <iostream>
 #include <string>
 #include <sstream>
@@ -135,6 +137,50 @@ int main()
 		-0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f,  1.0f
 	};
 
+	std::vector<float> groundVertices = std::vector<float>();
+
+	const siv::PerlinNoise perlin(time(0));
+	const double fx = 100 / 8.0;
+	const double fy = 100 / 8.0;
+	for (uint32_t w = 0; w < 100; w++)
+	{
+		for (uint32_t h = 0; h < 100; h++)
+		{
+			// top triangle
+			groundVertices.push_back(w);
+			groundVertices.push_back(h);
+			groundVertices.push_back(0.0f);
+
+			groundVertices.push_back(w  + 1);
+			groundVertices.push_back(h);
+			groundVertices.push_back(0.0f);
+		
+			groundVertices.push_back(w);
+			groundVertices.push_back(h + 1);
+			groundVertices.push_back(0.0f);
+
+			// bottom triangle
+			groundVertices.push_back(w);
+			groundVertices.push_back(h + 1);
+			groundVertices.push_back(0.0f);
+
+			groundVertices.push_back(w + 1);
+			groundVertices.push_back(h);
+			groundVertices.push_back(0.0f);
+
+			groundVertices.push_back(w + 1);
+			groundVertices.push_back(h + 1);
+			groundVertices.push_back(perlin.accumulatedOctaveNoise2D_0_1(w / fx, h / fy, 8) * 3);
+		}
+	}
+
+	VertexArray groundVao;
+	groundVao.Bind();
+	VertexBuffer groundVbo(groundVertices.data(), groundVertices.size() * sizeof(float));
+
+	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+
 	VertexArray vao;
 	vao.Bind();
 	VertexBuffer vbo(vertices, sizeof(vertices));
@@ -164,6 +210,7 @@ int main()
 
 	glEnable(GL_DEPTH_TEST);
 	// glEnable(GL_CULL_FACE);
+	// glFrontFace(GL_CCW);
 
 	// Textures
 	glActiveTexture(GL_TEXTURE0);
@@ -180,6 +227,7 @@ int main()
 	Shader cubeShader("./res/shaders/cube.vert", "./res/shaders/cube.frag");
 	Shader lightShader("./res/shaders/light.vert", "./res/shaders/light.frag");
 	Shader modelShader("./res/shaders/model.vert", "./res/shaders/model.frag");
+	Shader groundShader("./res/shaders/ground.vert", "./res/shaders/ground.frag");
 
 	struct Material
 	{
@@ -301,7 +349,17 @@ int main()
 		glm::mat4x4 view = camera.GetView();
 		glm::mat4x4 projection(1.0f);
 
-		projection = glm::perspective(glm::radians(camera.fov), (float)width / (float)height, 0.1f, 100.0f);
+		projection = glm::perspective(glm::radians(camera.fov), (float)width / (float)height, 0.1f, 1000.0f);
+
+		groundShader.Bind();
+		groundVao.Bind();
+		glm::mat4x4 model(1.0f);
+		model = glm::translate(model, { 0.0f, 0.0f, 0.0f });
+		model = glm::rotate(model, glm::radians(-90.0f), { 1.0f, 0.0f, 0.0f });
+		groundShader.Set("uView", view);
+		groundShader.Set("uProjection", projection);
+		groundShader.Set("uModel", model);
+		glDrawArrays(GL_TRIANGLES, 0, groundVertices.size());
 
 		// Lights
 		lightShader.Bind();
@@ -314,7 +372,7 @@ int main()
 		int lightIndex = 0;
 		for (const PointLight& light : lights)
 		{
-			glm::mat4x4 model(1.0f);
+			//glm::mat4x4 model(1.0f);
 			model = glm::translate(model, light.position);
 			lightShader.Bind();
 			lightShader.Set("uModel", model);
@@ -376,7 +434,6 @@ int main()
 
 		modelShader.Set("uProjection", projection);
 		modelShader.Set("uView", view);
-		glm::mat4x4 model(1.0f);
 		model = glm::translate(model, glm::vec3(15.0f, 10.0f, 0.0f));
 		model = glm::scale(model, glm::vec3(1.0f, 1.0f, 1.0f));	// it's a bit too big for our scene, so scale it down
 		modelShader.Set("uModel", model);
@@ -410,14 +467,16 @@ int main()
 			ImGui::Text("FOV");
 			ImGui::SliderFloat("##fov", &camera.fov, 0.0f, 180.0f);
 			ImGui::End();
-
-			// Objects
-			ImGui::Begin("Objects");
-			for (uint32_t i = 0; i < cubes.size(); i++)
-				if (ImGui::Button(std::string(std::to_string(i) + "# object").c_str()))
-					selectedObject = i;
-			ImGui::End();
 		}
+
+		
+		
+		// Objects
+		ImGui::Begin("Objects");
+		for (uint32_t i = 0; i < cubes.size(); i++)
+			if (ImGui::Button(std::string(std::to_string(i) + "# object").c_str()))
+				selectedObject = i;
+		ImGui::End();
 
 		// Object
 		{
@@ -495,7 +554,7 @@ int main()
 
 			ImGui::End();
 		}
-
+		
 		// Render dear imgui into screen
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

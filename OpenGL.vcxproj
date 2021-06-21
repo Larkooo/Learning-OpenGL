@@ -146,6 +146,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\FrameBuffer.cpp" />
+    <ClCompile Include="source\Object.cpp" />
     <ClCompile Include="source\Model.cpp" />
     <ClCompile Include="source\Mesh.cpp" />
     <ClCompile Include="source\Renderer.cpp" />
@@ -167,8 +169,10 @@
     <ClCompile Include="source\World.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\FrameBuffer.h" />
     <ClInclude Include="include\Camera.h" />
     <ClInclude Include="include\IndexBuffer.h" />
+    <ClInclude Include="include\PerlinNoise.h" />
     <ClInclude Include="include\Shader.h" />
     <ClInclude Include="include\stb_image.h" />
     <ClInclude Include="include\Texture.h" />
@@ -178,6 +182,7 @@
     <ClInclude Include="include\Mesh.h" />
     <ClInclude Include="include\Material.h" />
     <ClInclude Include="include\Model.h" />
+    <ClInclude Include="include\Object.h" />
     <ClInclude Include="source\vendor\imgui\imconfig.h" />
     <ClInclude Include="source\vendor\imgui\imgui.h" />
     <ClInclude Include="source\vendor\imgui\imgui_impl_glfw.h" />
@@ -190,6 +195,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="res\shaders\cube.frag" />
+    <None Include="res\shaders\ground.frag" />
+    <None Include="res\shaders\ground.vert" />
     <None Include="res\shaders\light.frag" />
     <None Include="res\shaders\light.vert" />
     <None Include="res\shaders\cube.vert" />

@@ -16,9 +16,10 @@
 
 class Renderer
 {
-	std::unique_ptr<World> m_World;
+	std::unique_ptr<World> m_World = nullptr;
 public:
-	inline Renderer(World* worldptr) : m_World(std::unique_ptr<World>(worldptr)) {};
+	//inline Renderer(World* worldptr) : m_World(std::unique_ptr<World>(worldptr)) {}
+	inline Renderer() {}
 	inline ~Renderer() {};
 
 	void Clear();
